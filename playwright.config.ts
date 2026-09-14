@@ -17,16 +17,16 @@ export default defineConfig({
   ],
 
   use: {
-    baseURL: 'https://demoqa.com',
-
-    trace: 'on-first-retry',
-
-    screenshot: 'only-on-failure',
-
-    video: 'retain-on-failure',
-
-    actionTimeout: 10_000,
+  baseURL: 'https://demoqa.com',
+  viewport: {
+    width: 1440,
+    height: 900,
   },
+  trace: 'on-first-retry',
+  screenshot: 'only-on-failure',
+  video: 'retain-on-failure',
+  actionTimeout: 10_000,
+},
 
   projects: [
     {

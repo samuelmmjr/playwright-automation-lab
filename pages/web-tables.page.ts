@@ -15,30 +15,9 @@ export class WebTablesPage {
   async visit() {
     await this.page.goto('/webtables');
 
-    await this.removeDemoQaAds();
-
     await expect(
       this.page.locator('#addNewRecordButton'),
     ).toBeVisible();
-  }
-
-  private async removeDemoQaAds() {
-    await this.page.evaluate(() => {
-      const selectors = [
-        '#fixedban',
-        '#RightSide_Advertisement',
-        '[id^="Ad.Plus-"]',
-        '[id^="google_ads_"]',
-        'iframe[title="3rd party ad content"]',
-        'iframe[aria-label="Advertisement"]',
-      ];
-
-      selectors.forEach((selector) => {
-        document.querySelectorAll(selector).forEach((element) => {
-          element.remove();
-        });
-      });
-    });
   }
 
   private getRowByEmail(email: string) {
@@ -48,7 +27,6 @@ export class WebTablesPage {
   }
 
   async addRecord(record: WebTableRecord) {
-    await this.removeDemoQaAds();
 
     await this.page.locator('#addNewRecordButton').click();
 
@@ -74,7 +52,6 @@ export class WebTablesPage {
   }
 
   async editDepartment(email: string, department: string) {
-    await this.removeDemoQaAds();
 
     const row = this.getRowByEmail(email);
 
@@ -103,7 +80,6 @@ export class WebTablesPage {
   }
 
   async deleteRecord(email: string) {
-    await this.removeDemoQaAds();
 
     const row = this.getRowByEmail(email);
 
