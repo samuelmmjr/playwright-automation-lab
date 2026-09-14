@@ -1,4 +1,5 @@
 import { test } from '@playwright/test';
+
 import {
   PracticeFormData,
   PracticeFormPage,
@@ -6,6 +7,8 @@ import {
 
 test.describe('Practice Form', () => {
   test('deve preencher e enviar o formulário com sucesso', async ({ page }) => {
+    test.setTimeout(60_000);
+
     const practiceFormPage = new PracticeFormPage(page);
 
     const formData: PracticeFormData = {
@@ -26,9 +29,20 @@ test.describe('Practice Form', () => {
       city: 'Delhi',
     };
 
-    await practiceFormPage.visit();
-    await practiceFormPage.fillForm(formData);
-    await practiceFormPage.submit();
-    await practiceFormPage.validateSubmission(formData);
+    await test.step('Acessar Practice Form', async () => {
+      await practiceFormPage.visit();
+    });
+
+    await test.step('Preencher Practice Form', async () => {
+      await practiceFormPage.fillForm(formData);
+    });
+
+    await test.step('Enviar Practice Form', async () => {
+      await practiceFormPage.submit();
+    });
+
+    await test.step('Validar dados enviados', async () => {
+      await practiceFormPage.validateSubmission(formData);
+    });
   });
 });

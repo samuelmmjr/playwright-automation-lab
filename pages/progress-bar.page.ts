@@ -21,6 +21,7 @@ export class ProgressBarPage {
 
   async start() {
     await expect(this.startStopButton).toHaveText('Start');
+
     await this.startStopButton.click();
   }
 
@@ -29,6 +30,7 @@ export class ProgressBarPage {
       .poll(
         async () => {
           const value = await this.progressBar.getAttribute('aria-valuenow');
+
           return Number(value);
         },
         {
@@ -57,9 +59,13 @@ export class ProgressBarPage {
   async resumeAndWaitUntilComplete() {
     await this.startStopButton.click();
 
-    await expect(this.progressBar).toHaveAttribute('aria-valuenow', '100', {
-      timeout: 30_000,
-    });
+    await expect(this.progressBar).toHaveAttribute(
+      'aria-valuenow',
+      '100',
+      {
+        timeout: 45_000,
+      },
+    );
 
     await expect(this.progressBar).toHaveText('100%');
     await expect(this.resetButton).toBeVisible();

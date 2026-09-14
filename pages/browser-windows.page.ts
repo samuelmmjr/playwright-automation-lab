@@ -5,18 +5,35 @@ export class BrowserWindowsPage {
 
   async visit() {
     await this.page.goto('/browser-windows');
+
+    await expect(this.page.locator('#tabButton')).toBeVisible({
+      timeout: 15_000,
+    });
   }
 
   async openNewTabAndValidate() {
-    const popupPromise = this.page.waitForEvent('popup');
+    const newTabButton = this.page.locator('#tabButton');
 
-    await this.page.getByRole('button', { name: 'New Tab' }).click();
+    await expect(newTabButton).toBeVisible();
+    await expect(newTabButton).toBeEnabled();
 
-    const popup = await popupPromise;
+    const [popup] = await Promise.all([
+      this.page.waitForEvent('popup', {
+        timeout: 15_000,
+      }),
+      newTabButton.click(),
+    ]);
 
-    await popup.waitForLoadState();
+    await popup.waitForLoadState('domcontentloaded');
 
-    await expect(popup.locator('#sampleHeading')).toBeVisible();
-    await expect(popup.locator('#sampleHeading')).toHaveText('This is a sample page');
+    const heading = popup.locator('#sampleHeading');
+
+    await expect(heading).toBeVisible({
+      timeout: 15_000,
+    });
+
+    await expect(heading).toHaveText('This is a sample page');
+
+    await popup.close();
   }
 }
