@@ -15,9 +15,30 @@ export class WebTablesPage {
   async visit() {
     await this.page.goto('/webtables');
 
+    await this.disableDemoQaInterference();
+
     await expect(
       this.page.locator('#addNewRecordButton'),
     ).toBeVisible();
+  }
+
+  private async disableDemoQaInterference() {
+    await this.page.addStyleTag({
+      content: `
+        #fixedban,
+        #RightSide_Advertisement,
+        [id^="Ad.Plus-"],
+        [id^="google_ads_"],
+        iframe[title="3rd party ad content"],
+        iframe[aria-label="Advertisement"] {
+          pointer-events: none !important;
+        }
+
+        .col-12.mt-4.col-md-3.col-xl-3 {
+          pointer-events: none !important;
+        }
+      `,
+    });
   }
 
   private getRowByEmail(email: string) {
@@ -27,7 +48,6 @@ export class WebTablesPage {
   }
 
   async addRecord(record: WebTableRecord) {
-
     await this.page.locator('#addNewRecordButton').click();
 
     const modal = this.page.locator('.modal-content');
@@ -52,7 +72,6 @@ export class WebTablesPage {
   }
 
   async editDepartment(email: string, department: string) {
-
     const row = this.getRowByEmail(email);
 
     await expect(row).toBeVisible();
@@ -60,9 +79,9 @@ export class WebTablesPage {
     const editButton = row.locator('[title="Edit"]');
 
     await expect(editButton).toBeVisible();
+    await expect(editButton).toBeEnabled();
 
     await editButton.scrollIntoViewIfNeeded();
-
     await editButton.click();
 
     const modal = this.page.locator('.modal-content');
@@ -80,7 +99,6 @@ export class WebTablesPage {
   }
 
   async deleteRecord(email: string) {
-
     const row = this.getRowByEmail(email);
 
     await expect(row).toBeVisible();
@@ -88,9 +106,9 @@ export class WebTablesPage {
     const deleteButton = row.locator('[title="Delete"]');
 
     await expect(deleteButton).toBeVisible();
+    await expect(deleteButton).toBeEnabled();
 
     await deleteButton.scrollIntoViewIfNeeded();
-
     await deleteButton.click();
 
     await expect(
