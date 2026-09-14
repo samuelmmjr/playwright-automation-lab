@@ -23,15 +23,22 @@ export class WebTablesPage {
   }
 
   private async removeDemoQaAds() {
-    await this.page.locator('#fixedban').evaluateAll((elements) => {
-      elements.forEach((element) => element.remove());
-    });
+    await this.page.evaluate(() => {
+      const selectors = [
+        '#fixedban',
+        '#RightSide_Advertisement',
+        '[id^="Ad.Plus-"]',
+        '[id^="google_ads_"]',
+        'iframe[title="3rd party ad content"]',
+        'iframe[aria-label="Advertisement"]',
+      ];
 
-    await this.page
-      .locator('#RightSide_Advertisement')
-      .evaluateAll((elements) => {
-        elements.forEach((element) => element.remove());
+      selectors.forEach((selector) => {
+        document.querySelectorAll(selector).forEach((element) => {
+          element.remove();
+        });
       });
+    });
   }
 
   private getRowByEmail(email: string) {
@@ -41,6 +48,8 @@ export class WebTablesPage {
   }
 
   async addRecord(record: WebTableRecord) {
+    await this.removeDemoQaAds();
+
     await this.page.locator('#addNewRecordButton').click();
 
     const modal = this.page.locator('.modal-content');
@@ -74,6 +83,9 @@ export class WebTablesPage {
     const editButton = row.locator('[title="Edit"]');
 
     await expect(editButton).toBeVisible();
+
+    await editButton.scrollIntoViewIfNeeded();
+
     await editButton.click();
 
     const modal = this.page.locator('.modal-content');
@@ -100,6 +112,9 @@ export class WebTablesPage {
     const deleteButton = row.locator('[title="Delete"]');
 
     await expect(deleteButton).toBeVisible();
+
+    await deleteButton.scrollIntoViewIfNeeded();
+
     await deleteButton.click();
 
     await expect(
